@@ -1,0 +1,11 @@
+module four_bit_2to1mux (sel,a,b,chosen);
+ 
+	input sel;
+	input[3:0] a, b;
+	output[3:0] chosen;
+	
+	//fill in wires to connect s,x,y, m with inputs and outputs sel, a, b, chosen
+	one_bit_2to1mux mux1(.s(),.x(),.y(),.m()); 
+	//Complete other instantiations
+ 
+endmodule

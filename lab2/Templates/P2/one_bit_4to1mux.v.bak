@@ -1,0 +1,13 @@
+module one_bit_4to1mux (s,u,v,w,x,m);
+ 
+	input[1:0] s;
+	input u,v,w,x;
+	output m;
+	
+	wire t1, t2;
+	
+	
+	one_bit_2to1mux mux1(.s(),.x(),.y(),.m()); //complete
+	//complete other instantiations
+ 
+endmodule

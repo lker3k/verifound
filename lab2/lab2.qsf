@@ -1,0 +1,126 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2020  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 20.1.0 Build 711 06/05/2020 SJ Lite Edition
+# Date created = 09:08:34  March 10, 2025
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		lab2_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSEMA5F31C6
+set_global_assignment -name TOP_LEVEL_ENTITY part6
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "09:08:34  MARCH 10, 2025"
+set_global_assignment -name LAST_QUARTUS_VERSION "20.1.0 Lite Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
+set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_timing
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH part6_TB -section_id eda_simulation
+set_global_assignment -name EDA_TEST_BENCH_NAME testbench_labtest_combinational -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id testbench_labtest_combinational
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME testbench_labtest_combinational -section_id testbench_labtest_combinational
+set_global_assignment -name EDA_TEST_BENCH_NAME testbench_labtest2_combinational -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id testbench_labtest2_combinational
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME testbench_labtest2_combinational -section_id testbench_labtest2_combinational
+set_global_assignment -name EDA_TEST_BENCH_NAME part1_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id part1_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME part1_TB -section_id part1_TB
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "500 ns" -section_id part1_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME part2_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id part2_TB
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "500 ns" -section_id part2_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME part2_TB -section_id part2_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME part3_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id part3_TB
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "3000 ns" -section_id part3_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME part3_TB -section_id part3_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME part4_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id part4_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME part4_TB -section_id part4_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME part5_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id part5_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME part5_TB -section_id part5_TB
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "2000 ns" -section_id part4_TB
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "2000 ns" -section_id part5_TB
+set_global_assignment -name VERILOG_FILE "Templates p4-p6/P6/part6_TB.v"
+set_global_assignment -name VERILOG_FILE "Templates p4-p6/P6/part6.v"
+set_global_assignment -name VERILOG_FILE "Templates p4-p6/P5/part5_TB.v"
+set_global_assignment -name VERILOG_FILE "Templates p4-p6/P5/part5.v"
+set_global_assignment -name VERILOG_FILE "Templates p4-p6/P4/part4_TB.v"
+set_global_assignment -name VERILOG_FILE "Templates p4-p6/P4/decoder_7seg.v"
+set_global_assignment -name VERILOG_FILE Templates/P3/two_bit_4to1muxV2.v
+set_global_assignment -name VERILOG_FILE Templates/P3/two_bit_4to1mux.v
+set_global_assignment -name VERILOG_FILE Templates/P3/part3_TB.v
+set_global_assignment -name VERILOG_FILE Templates/P2/part2_TB.v
+set_global_assignment -name VERILOG_FILE Templates/P2/one_bit_4to1muxV2.v
+set_global_assignment -name VERILOG_FILE Templates/P2/one_bit_4to1mux.v
+set_global_assignment -name VERILOG_FILE Templates/P1/four_bit_2to1muxV2.v
+set_global_assignment -name VERILOG_FILE Templates/P1/four_bit_2to1mux.v
+set_global_assignment -name VERILOG_FILE Templates/P1/part1_TB.v
+set_global_assignment -name VERILOG_FILE Templates/P1/one_bit_2to1mux_TB.v
+set_global_assignment -name VERILOG_FILE Templates/P1/one_bit_2to1mux.v
+set_global_assignment -name VERILOG_FILE Q2/testbench_labtest2_combinational.v
+set_global_assignment -name VERILOG_FILE Q2/labtest_q2_hardware.v
+set_global_assignment -name VERILOG_FILE Q2/circuitC.v
+set_global_assignment -name VERILOG_FILE Q2/circuitB.v
+set_global_assignment -name VERILOG_FILE Q2/circuitA.v
+set_global_assignment -name VERILOG_FILE Q1/testbench_labtest_combinational.v
+set_global_assignment -name VERILOG_FILE Q1/labtest_q1_hardware.v
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_FILE Q1/testbench_labtest_combinational.v -section_id testbench_labtest_combinational
+set_global_assignment -name EDA_TEST_BENCH_FILE Q2/testbench_labtest2_combinational.v -section_id testbench_labtest2_combinational
+set_global_assignment -name EDA_TEST_BENCH_FILE Templates/P1/part1_TB.v -section_id part1_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE Templates/P2/part2_TB.v -section_id part2_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE Templates/P3/part3_TB.v -section_id part3_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE "Templates p4-p6/P4/part4_TB.v" -section_id part4_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE "Templates p4-p6/P5/part5_TB.v" -section_id part5_TB
+set_global_assignment -name EDA_TEST_BENCH_NAME part6_TB -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id part6_TB
+set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "2000 ns" -section_id part6_TB
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME part6_TB -section_id part6_TB
+set_global_assignment -name EDA_TEST_BENCH_FILE "Templates p4-p6/P6/part6_TB.v" -section_id part6_TB
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

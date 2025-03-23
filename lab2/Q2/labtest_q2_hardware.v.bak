@@ -1,0 +1,23 @@
+module labtest_q2_hardware  (a,b,c,d,x);
+    input[3:0] a, b, d;
+	input c;
+    output[3:0] x;
+
+    wire[1:0] t1;
+    wire[3:0] t2,t3; //you may use this, but do not have to
+    reg[3:0] t5, t6, t7; //you may use this, but do not have to
+
+    circuitA comb1(.a(),.b(),.c(),.x(),.y());
+    circuitB comb2(.a(),.b(),.x());
+    
+    always @() begin
+        case ()
+            2'b00 : begin t5<= ; end
+            2'b01 : begin t5<= ; end
+            2'b10 : begin t5<= ; end
+            default : begin t5<= ; end
+        endcase
+    end
+    
+    circuitC comb3(.a(),.b(),.x());
+endmodule

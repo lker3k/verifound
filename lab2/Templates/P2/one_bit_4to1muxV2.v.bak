@@ -1,0 +1,17 @@
+module one_bit_4to1muxV2 (s,u,v,w,x,m);
+ 
+	input[1:0] s;
+	input u,v,w,x;
+	output reg m;
+	
+	reg t1, t2;
+	
+	always @(u,v,s[0]) begin
+		if (s[0] == //complete)
+			t1 = //complete;
+		else
+			t1 = //complete;
+	end
+ 
+ 	//complete other always blocks
+endmodule

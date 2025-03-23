@@ -1,0 +1,9 @@
+module two_bit_4to1mux (s,u,v,w,x,m);
+ 
+	input[1:0] s;
+	input[1:0] u, v, w, x;
+	output[1:0] m;
+	
+	one_bit_4to1mux mux1(); //complete instantiation
+	//complete other instantiations
+endmodule
