@@ -13,11 +13,11 @@ module lab4_part4_TB;
 	// Use same inputs (same inputs for D, clk to all instances)
 	// Use 3 separate outputs (see wires above)
 	
-	//dff_pos instantiate_dff_pos (();
+	dff_pos dp (.D(SW[0]), .clk(SW[1]), .Q(LEDR[1]), .Qnot(LEDR[8]));
 
-	//dff_neg instantiate_dff_neg (();
+	dff_neg dn (.D(SW[0]), .clk(SW[1]), .Q(LEDR[2]), .Qnot(LEDR[9]));
 	
-	//d_latch instantiate_d_latch (();
+	d_latch dl (.D(SW[0]), .clk(SW[1]), .Q(LEDR[0]), .Qnot(LEDR[7]));
 	
 	initial begin 
 		count = 4'b0000;
