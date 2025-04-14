@@ -4,9 +4,9 @@ module instantiate_lab4_part2(SW,LEDR);
 	output [9:0] LEDR;
 
 	gated_DLatch instantiate_gated_DLatch (
-	.clk(), 
-	.D(), 
-	.Q(), 
-	.Qnot());
+	.clk(SW[1]), 
+	.D(SW[0]), 
+	.Q(LEDR[0]), 
+	.Qnot(LEDR[1]));
 	
 endmodule
