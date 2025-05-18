@@ -1,4 +1,4 @@
-module cpu_fsm(clk, rst, instruction);
+module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
 
     parameter OP_SIZE = 4;
     parameter ARG_SIZE = 3;
@@ -7,21 +7,32 @@ module cpu_fsm(clk, rst, instruction);
     input clk, rst;
     input [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] instruction;
 
-    output reg RX_en, RY_en, RX_tri, RY_tri;
-    output reg data_tri, g_en, g_tri, a_en, a_tri;
+    output reg  [8:0] general_reg;
+    output reg  [7:0] en_reg, tri_reg;
+    output reg done; // used to incement program counter
 
-    
+    reg RX_en, RY_en, RX_tri, RY_tri, data_tri, g_en, g_tri, a_en, a_tri;
+    reg         [7:0] en_regX, en_regY, tri_regX, tri_regY;
 
     // encode instructions
-    localparam OP_LOAD    = 2'b0000;
-    localparam OP_MOVE    = 2'b0001;
-    localparam OP_ADD     = 2'b0010;
-    localparam OP_XOR     = 2'b0011;
+    localparam OP_LOAD    = 4'b0000;
+    localparam OP_MOVE    = 4'b0001;
+    localparam OP_ADD     = 4'b0010;
+    localparam OP_XOR     = 4'b0011;
+
+    localparam R0 = 3'b000;
+    localparam R1 = 3'b001;
+    localparam R2 = 3'b010;
+    localparam R3 = 3'b011;
+    localparam R4 = 3'b100;
+    localparam R5 = 3'b101;
+    localparam R6 = 3'b110;
+    localparam R7 = 3'b111;
 
     // take operater part of instruction
-    reg [OP_SIZE - 1 : 0] operation = instruction[OP_SIZE + ARG_NUM * ARG_SIZE - 1: ARG_NUM * ARG_SIZE];
-    reg [ARG_SIZE - 1 : 0] arg1 = instruction[ARG_SIZE * ARG_NUM - 1 : ARG_SIZE];
-    reg [ARG_SIZE - 1 : 0] arg2 = instruction[ARG_SIZE - 1 : 0];
+    wire [OP_SIZE - 1 : 0] operation = instruction[OP_SIZE + ARG_NUM * ARG_SIZE - 1: ARG_NUM * ARG_SIZE];
+    wire [ARG_SIZE - 1 : 0] arg1 = instruction[ARG_SIZE * ARG_NUM - 1 : ARG_SIZE];
+    wire [ARG_SIZE - 1 : 0] arg2 = instruction[ARG_SIZE - 1 : 0];
     
     
     // states
@@ -40,7 +51,7 @@ module cpu_fsm(clk, rst, instruction);
     always @(*) begin: next_state_logic
         next_state = state;
         case(state)
-            IDLE: begin case(operater)
+            IDLE: begin case(operation)
                     OP_LOAD : next_state = LOAD;
                     OP_MOVE : next_state = MOVE;
                     OP_ADD  : next_state = ADD1;
@@ -60,7 +71,7 @@ module cpu_fsm(clk, rst, instruction);
     end
 
     always @(posedge clk or negedge rst) begin : state_transition_logic
-        if (rst) begin
+        if (!rst) begin
             state <= IDLE;
         end else begin
             state <= next_state;
@@ -69,15 +80,42 @@ module cpu_fsm(clk, rst, instruction);
 
     always @(*) begin : output_logic
         case(state)
-            IDLE:
-            LOAD: RX_en = 1, data_tri = 1;
-            MOVE: RX_en = 1, RY_tri = 1; // RY -> RX
-            ADD1: RX_tri = 1, A_en = 1;
-            ADD2: G_en = 1;
-            ADD3: G_tri = 1, RX_en;
-            XOR1: RX_tri = 1, B_en = 1;
-            XOR2: H_en = 1;
-            XOR3: G_tri = 1, RX_en;
+            LOAD: begin
+                RX_en = 1; 
+                data_tri = 1;
+                done = 1;
+            end
+            MOVE: begin 
+                RX_en = 1;
+                RY_tri = 1;
+                done = 1;
+            end
+            ADD1: begin
+                RX_tri = 1;
+                A_en = 1;
+            end
+            ADD2: begin
+                G_en = 1;
+                RY_tri = 1;
+            end
+            ADD3: begin
+                G_tri = 1;
+                RX_en = 1;
+                done = 1;
+            end
+            XOR1: begin
+                RX_tri = 1;
+                B_en = 1;
+            end
+            XOR2: begin
+                H_en = 1;
+                RY_tri = 1;
+            end
+            XOR3: begin
+                G_tri = 1;
+                RX_en = 1;
+                done = 1;
+            end
             default : begin
                 RX_en       = 0;
                 RY_en       = 0;
@@ -88,22 +126,75 @@ module cpu_fsm(clk, rst, instruction);
                 g_tri       = 0;
                 a_en        = 0;
                 a_tri       = 0;
+                b_en        = 0;
+                b_tri       = 0;
+                h_en        = 0;
+                h_tri       = 0;
+                done        = 0;
             end
         endcase
     end
 
 
     always @(*) begin : registers
-        case(arg1)
-            000 : RX_out = 00000001;
-            001 : RX_out = 00000010;
-            010 : RX_out = 00000100;
-            011 : RX_out = 00001000;
-            100 : RX_out = 00010000;
-            101 : RX_out = 00100000;
-            110 : RX_out = 01000000;
-            111 : RX_out = 10000000;
-        endcase
+        if (RX_en) begin
+            case(arg1)
+                R0 : en_regX = 00000001;
+                R1 : en_regX = 00000010;
+                R2 : en_regX = 00000100;
+                R3 : en_regX = 00001000;
+                R4 : en_regX = 00010000;
+                R5 : en_regX = 00100000;
+                R6 : en_regX = 01000000;
+                R7 : en_regX = 10000000;
+                default : en_regX = 8'b00000000;
+            endcase
+        end
+        if (RY_en) begin
+            case(arg1)
+                R0 : en_regY = 00000001;
+                R1 : en_regY = 00000010;
+                R2 : en_regY = 00000100;
+                R3 : en_regY = 00001000;
+                R4 : en_regY = 00010000;
+                R5 : en_regY = 00100000;
+                R6 : en_regY = 01000000;
+                R7 : en_regY = 10000000;
+                default : en_regY = 8'b00000000;
+            endcase
+        end
+
+        if (RX_tri) begin
+            case(arg2)
+                R0 : tri_regX = 8'b00000001;
+                R1 : tri_regX = 8'b00000010;
+                R2 : tri_regX = 8'b00000100;
+                R3 : tri_regX = 8'b00001000;
+                R4 : tri_regX = 8'b00010000;
+                R5 : tri_regX = 8'b00100000;
+                R6 : tri_regX = 8'b01000000;
+                R7 : tri_regX = 8'b10000000;
+                default : tri_regX = 8'b00000000;
+            endcase
+        end
+        if (RY_tri) begin
+            case(arg2)
+                R0 : tri_regY = 8'b00000001;
+                R1 : tri_regY = 8'b00000010;
+                R2 : tri_regY = 8'b00000100;
+                R3 : tri_regY = 8'b00001000;
+                R4 : tri_regY = 8'b00010000;
+                R5 : tri_regY = 8'b00100000;
+                R6 : tri_regY = 8'b01000000;
+                R7 : tri_regY = 8'b10000000;
+                default : tri_regY = 8'b00000000;
+            endcase
+        end
+
+
+        general_reg = {a_en, a_tri, g_en, g_tri, b_en, b_tri, h_en, h_tri, data_tri}
+        en_reg = en_regX | en_regY;
+        tri_reg = tri_regX | tri_regY;
     end
 
 endmodule
