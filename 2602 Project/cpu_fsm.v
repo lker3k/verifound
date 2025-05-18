@@ -1,4 +1,4 @@
-module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
+module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addsub, exclor);
 
     parameter OP_SIZE = 4;
     parameter ARG_SIZE = 3;
@@ -7,19 +7,27 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
     input clk, rst;
     input [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] instruction;
 
-    output reg  [8:0] general_reg;
-    output reg  [7:0] en_reg, tri_reg;
+    output reg  [5:0] general_reg;
+    output reg  [7:0] en_reg;
+    output reg  [10:0] tri_reg;
     output reg done; // used to incement program counter
 
-    reg RX_en, RY_en, RX_tri, RY_tri, data_tri, g_en, g_tri, a_en, a_tri;
-    reg         [7:0] en_regX, en_regY, tri_regX, tri_regY;
+    reg RX_en, RY_en, RX_tri, RY_tri, extern, g_en, g_tri, a_en, a_tri, b_en, b_tri, h_en, h_tri;
+    reg [7:0] en_regX, en_regY, tri_regX, tri_regY;
 
+	 // take operater part of instruction
+    wire [OP_SIZE - 1 : 0] operation = instruction[OP_SIZE + ARG_NUM * ARG_SIZE - 1: ARG_NUM * ARG_SIZE];
+    wire [ARG_SIZE - 1 : 0] arg1 = instruction[ARG_SIZE * ARG_NUM - 1 : ARG_SIZE];
+    wire [ARG_SIZE - 1 : 0] arg2 = instruction[ARG_SIZE - 1 : 0];
+	 
+	 
     // encode instructions
     localparam OP_LOAD    = 4'b0000;
     localparam OP_MOVE    = 4'b0001;
     localparam OP_ADD     = 4'b0010;
     localparam OP_XOR     = 4'b0011;
 
+	 // register encoding
     localparam R0 = 3'b000;
     localparam R1 = 3'b001;
     localparam R2 = 3'b010;
@@ -29,13 +37,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
     localparam R6 = 3'b110;
     localparam R7 = 3'b111;
 
-    // take operater part of instruction
-    wire [OP_SIZE - 1 : 0] operation = instruction[OP_SIZE + ARG_NUM * ARG_SIZE - 1: ARG_NUM * ARG_SIZE];
-    wire [ARG_SIZE - 1 : 0] arg1 = instruction[ARG_SIZE * ARG_NUM - 1 : ARG_SIZE];
-    wire [ARG_SIZE - 1 : 0] arg2 = instruction[ARG_SIZE - 1 : 0];
-    
-    
-    // states
+    // state encoding
     parameter   IDLE = 4'b0000,
                 LOAD = 4'b0001,
                 MOVE = 4'b0010,
@@ -45,7 +47,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
                 XOR1 = 4'b1000,
                 XOR2 = 4'b1001,
                 XOR3 = 4'b1011;
-    output reg [3:0] state = IDLE, next_state;
+    reg [3:0] state = IDLE, next_state;
 
     // state machine
     always @(*) begin: next_state_logic
@@ -60,18 +62,21 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
                 endcase end
             LOAD    : next_state = IDLE;
             MOVE    : next_state = IDLE;
+				
             ADD1    : next_state = ADD2;
             ADD2    : next_state = ADD3;
             ADD3    : next_state = IDLE;
+				
             XOR1    : next_state = XOR2;
             XOR2    : next_state = XOR3;
             XOR3    : next_state = IDLE;
+				
             default : next_state = IDLE;
         endcase
     end
 
     always @(posedge clk or negedge rst) begin : state_transition_logic
-        if (!rst) begin
+        if (!rst) begin // reset low
             state <= IDLE;
         end else begin
             state <= next_state;
@@ -82,7 +87,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
         case(state)
             LOAD: begin
                 RX_en = 1; 
-                data_tri = 1;
+                extern = 1;
                 done = 1;
             end
             MOVE: begin 
@@ -92,27 +97,29 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
             end
             ADD1: begin
                 RX_tri = 1;
-                A_en = 1;
+                a_en = 1;
             end
             ADD2: begin
-                G_en = 1;
+                g_en = 1;
                 RY_tri = 1;
+					 addclr = 1;
             end
             ADD3: begin
-                G_tri = 1;
+                g_tri = 1;
                 RX_en = 1;
                 done = 1;
             end
             XOR1: begin
                 RX_tri = 1;
-                B_en = 1;
+                b_en = 1;
             end
             XOR2: begin
-                H_en = 1;
+                h_en = 1;
                 RY_tri = 1;
+					 xorclr = 1;
             end
             XOR3: begin
-                G_tri = 1;
+                g_tri = 1;
                 RX_en = 1;
                 done = 1;
             end
@@ -121,7 +128,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
                 RY_en       = 0;
                 RX_tri      = 0;
                 RY_tri      = 0;
-                data_tri    = 0;
+                extern	    = 0;
                 g_en        = 0;
                 g_tri       = 0;
                 a_en        = 0;
@@ -192,9 +199,9 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done);
         end
 
 
-        general_reg = {a_en, a_tri, g_en, g_tri, b_en, b_tri, h_en, h_tri, data_tri}
+        general_reg = {a_en, a_tri, g_en, b_en, b_tri, h_en};
         en_reg = en_regX | en_regY;
-        tri_reg = tri_regX | tri_regY;
+        tri_reg = {g_tri, h_tri, extern, (tri_regX | tri_regY)};
     end
 
 endmodule
