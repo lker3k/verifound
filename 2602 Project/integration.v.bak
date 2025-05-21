@@ -1,0 +1,47 @@
+module integration (clk, rst);
+
+	input clk, rst;
+	
+	
+	
+	
+	
+	cpu_fsm fsm (.clk(clk), 
+					.rst(rst), 
+					.instruction(), 
+					.en_reg(), 
+					.tri_reg(), 
+					.general_reg(), 
+					.done(), 
+					.addclr(), 
+					.xorclr());
+					
+	memory memory (.clk(),
+					 .rst(),
+					 .branch(),
+					 .branchaddress(),
+					 .instruction());
+					 
+	genvar i;
+	generate 
+		for (i = 0; i < 8; i = i + 1) begin : register_loop
+			register register (
+						  .clk(),
+						  .R_in(),
+						  .R_out(),
+						  .rst(),
+						  .bus());
+		end
+	endgenerate
+	
+	add_alu adder (.a(), .b(), .g(), .rst());
+	xor_alu xor_  (.a(), .b(), .g(), .rst());
+	
+	A A (.A(), .bus(), .a_in(), .clk(), .rst());
+	
+	register G (.clk(),
+				  .R_in(),
+				  .R_out(),
+				  .rst(),
+				  .bus());
+endmodule
