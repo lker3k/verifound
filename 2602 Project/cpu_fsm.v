@@ -61,17 +61,41 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                     OP_XOR  : next_state = XOR1;
                     default : next_state = IDLE;
                 endcase end
-            LOAD    : next_state = IDLE; // note an error here, it should go to next stage 
+            LOAD: begin case(operation)
+                    OP_LOAD : next_state = LOAD;
+                    OP_MOVE : next_state = MOVE;
+                    OP_ADD  : next_state = ADD1;
+                    OP_XOR  : next_state = XOR1;
+                    default : next_state = IDLE;
+                endcase end; // note an error here, it should go to next stage 
 													  // base on instruction, not just straight back to IDLE
-            MOVE    : next_state = IDLE;
+            MOVE: begin case(operation)
+                    OP_LOAD : next_state = LOAD;
+                    OP_MOVE : next_state = MOVE;
+                    OP_ADD  : next_state = ADD1;
+                    OP_XOR  : next_state = XOR1;
+                    default : next_state = IDLE;
+                endcase end
 				
-            ADD1    : next_state = ADD2;
-            ADD2    : next_state = ADD3;
-            ADD3    : next_state = IDLE;
+            ADD1: next_state = ADD2;
+            ADD2: next_state = ADD3;
+            ADD3: begin case(operation)
+                    OP_LOAD : next_state = LOAD;
+                    OP_MOVE : next_state = MOVE;
+                    OP_ADD  : next_state = ADD1;
+                    OP_XOR  : next_state = XOR1;
+                    default : next_state = IDLE;
+                endcase end
 				
-            XOR1    : next_state = XOR2;
-            XOR2    : next_state = XOR3;
-            XOR3    : next_state = IDLE;
+            XOR1: next_state = XOR2;
+            XOR2: next_state = XOR3;
+            XOR3: begin case(operation)
+                    OP_LOAD : next_state = LOAD;
+                    OP_MOVE : next_state = MOVE;
+                    OP_ADD  : next_state = ADD1;
+                    OP_XOR  : next_state = XOR1;
+                    default : next_state = IDLE;
+                endcase end
 				
             default : next_state = IDLE;
         endcase
@@ -120,7 +144,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
             ADD2: begin
                 g_en 	= 1'b1;
                 RY_tri 	= 1'b1;
-					 addclr 	= 1'b1;
+		addclr 	= 1'b1;
             end
             ADD3: begin
                 g_tri 	= 1'b1;
@@ -134,7 +158,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
             XOR2: begin
                 h_en 	= 1'b1;
                 RY_tri 	= 1'b1;
-					 xorclr 	= 1'b1;
+		xorclr 	= 1'b1;
             end
             XOR3: begin
                 g_tri 	= 1'b1;
@@ -156,8 +180,8 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                 h_en    = 1'b0;
                 h_tri   = 1'b0;
                 done	= 1'b0;
-				addclr	= 1'b0;
-				xorclr	= 1'b0;
+		addclr	= 1'b0;
+		xorclr	= 1'b0;
             end
         endcase
     end
