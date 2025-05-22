@@ -67,7 +67,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                     OP_ADD  : next_state = ADD1;
                     OP_XOR  : next_state = XOR1;
                     default : next_state = IDLE;
-                endcase end; // note an error here, it should go to next stage 
+                endcase end // note an error here, it should go to next stage 
 													  // base on instruction, not just straight back to IDLE
             MOVE: begin case(operation)
                     OP_LOAD : next_state = LOAD;
