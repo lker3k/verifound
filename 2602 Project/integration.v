@@ -24,7 +24,9 @@ module integration (clk, rst);
 	
 	wire done;
 	
-	wire [1:0] flags;
+	wire [1:0] clr_flags;
+	
+	
 	
 	// if assign last 3 bit, it will always be 3'b000 (instruction format) -> assign a value instead
 	assign data = 3'b101;
@@ -38,12 +40,13 @@ module integration (clk, rst);
 					.tri_reg(tri_en), 
 					.general_reg(general_reg), 
 					.done(done), 
-					.addclr(flags[0]), 
-					.xorclr(flags[1]));
+					.addclr(clr_flags[0]), 
+					.xorclr(clr_flags[1]));
 					
 	memory memory (.clk(clk),
 					 .rst(!rst),
 					 .branch(0),
+					 .done(done),
 					 .branchaddress(0),
 					 .instruction(instruction));
 					 

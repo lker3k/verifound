@@ -15,11 +15,23 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
     reg RX_en, RY_en, RX_tri, RY_tri, extern, g_en, g_tri, a_en, a_tri, b_en, b_tri, h_en, h_tri;
     reg [7:0] en_regX, en_regY, tri_regX, tri_regY = 0;
 
+	 reg [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] prev_instruction;
+	 // create an internal flag so that the argument of state (which is delay by 1 clk cycle)
+	 // would not get overwrite during the add operation (more than 1 clk cycle)
+	 
+	 always @(posedge clk or negedge rst) begin
+		  if (!rst) begin
+				prev_instruction <= 0;
+		  end else begin
+				prev_instruction <= instruction;
+		  end
+	 end
 	 // take operater part of instruction
     wire [OP_SIZE - 1 : 0] operation = instruction[OP_SIZE + ARG_NUM * ARG_SIZE - 1: ARG_NUM * ARG_SIZE];
-    wire [ARG_SIZE - 1 : 0] arg1 = instruction[ARG_SIZE * ARG_NUM - 1 : ARG_SIZE];
-    wire [ARG_SIZE - 1 : 0] arg2 = instruction[ARG_SIZE - 1 : 0];
+    wire [ARG_SIZE - 1 : 0] arg1 = prev_instruction[ARG_SIZE * ARG_NUM - 1 : ARG_SIZE];
+    wire [ARG_SIZE - 1 : 0] arg2 = prev_instruction[ARG_SIZE - 1 : 0];
 	 
+
 	 
     // encode instructions
     localparam OP_LOAD    = 4'b0000;
@@ -49,6 +61,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                 XOR3 = 4'b1011;
     reg [3:0] state = IDLE;
 	 reg [3:0] next_state;
+	 reg [3:0] prev_state;
 
     // state machine
     always @(*) begin: next_state_logic
@@ -61,7 +74,8 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                     OP_XOR  : next_state = XOR1;
                     default : next_state = IDLE;
                 endcase end
-            LOAD: begin case(operation)
+            LOAD:
+				begin case(operation)
                     OP_LOAD : next_state = LOAD;
                     OP_MOVE : next_state = MOVE;
                     OP_ADD  : next_state = ADD1;
@@ -69,7 +83,9 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                     default : next_state = IDLE;
                 endcase end // note an error here, it should go to next stage 
 													  // base on instruction, not just straight back to IDLE
-            MOVE: begin case(operation)
+						// There's an error here
+            MOVE: 
+				begin case(operation)
                     OP_LOAD : next_state = LOAD;
                     OP_MOVE : next_state = MOVE;
                     OP_ADD  : next_state = ADD1;
@@ -79,7 +95,8 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
 				
             ADD1: next_state = ADD2;
             ADD2: next_state = ADD3;
-            ADD3: begin case(operation)
+            ADD3:
+				begin case(operation)
                     OP_LOAD : next_state = LOAD;
                     OP_MOVE : next_state = MOVE;
                     OP_ADD  : next_state = ADD1;
@@ -89,7 +106,8 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
 				
             XOR1: next_state = XOR2;
             XOR2: next_state = XOR3;
-            XOR3: begin case(operation)
+            XOR3: 
+				begin case(operation)
                     OP_LOAD : next_state = LOAD;
                     OP_MOVE : next_state = MOVE;
                     OP_ADD  : next_state = ADD1;
@@ -104,8 +122,10 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
     always @(posedge clk or negedge rst) begin : state_transition_logic
         if (!rst) begin // reset low
             state <= IDLE;
+				//prev_state <= IDLE;
         end else begin
             state <= next_state;
+				//prev_state <= state;
         end
     end
 
@@ -127,6 +147,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
     addclr  = 1'b0;
     xorclr  = 1'b0;
         case(state)
+				//IDLE: done = (prev_state != IDLE) ? 1'b1 : 1'b0; 
             LOAD: begin
                 RX_en 	= 1'b1; 
                 extern 	= 1'b1;
@@ -144,7 +165,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
             ADD2: begin
                 g_en 	= 1'b1;
                 RY_tri 	= 1'b1;
-		addclr 	= 1'b1;
+					 addclr 	= 1'b1;
             end
             ADD3: begin
                 g_tri 	= 1'b1;
@@ -158,12 +179,12 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
             XOR2: begin
                 h_en 	= 1'b1;
                 RY_tri 	= 1'b1;
-		xorclr 	= 1'b1;
+					 xorclr 	= 1'b1;
             end
             XOR3: begin
-                g_tri 	= 1'b1;
+                h_tri 	= 1'b1;
                 RX_en 	= 1'b1;
-                done 	= 1'b1;
+					 done 	= 1'b1;
             end
             default : begin
                 RX_en   = 1'b0;
@@ -179,9 +200,9 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                 b_tri   = 1'b0;
                 h_en    = 1'b0;
                 h_tri   = 1'b0;
-                done	= 1'b0;
-		addclr	= 1'b0;
-		xorclr	= 1'b0;
+                done		= 1'b0;
+					 addclr	= 1'b0;
+				    xorclr	= 1'b0;
             end
         endcase
     end
@@ -193,7 +214,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
 			tri_regY = 0;
 			
         if (RX_en) begin
-            case(arg1)
+            case(arg1) //?
                 R0 : en_regX = 8'b00000001;
                 R1 : en_regX = 8'b00000010;
                 R2 : en_regX = 8'b00000100;
@@ -206,7 +227,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
             endcase
         end
         if (RY_en) begin
-            case(arg1)
+            case(arg2) //?
                 R0 : en_regY = 8'b00000001;
                 R1 : en_regY = 8'b00000010;
                 R2 : en_regY = 8'b00000100;
@@ -222,7 +243,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
 			
 			
         if (RX_tri) begin
-            case(arg2)
+            case(arg1) //?
                 R0 : tri_regX = 8'b00000001;
                 R1 : tri_regX = 8'b00000010;
                 R2 : tri_regX = 8'b00000100;
@@ -234,8 +255,8 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, general_reg, done, addclr
                 default : tri_regX = 8'b00000000;
             endcase
         end
-        else if (RY_tri) begin
-            case(arg2)
+        if (RY_tri) begin
+            case(arg2) //?
                 R0 : tri_regY = 8'b00000001;
                 R1 : tri_regY = 8'b00000010;
                 R2 : tri_regY = 8'b00000100;
