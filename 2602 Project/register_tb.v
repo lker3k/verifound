@@ -4,11 +4,11 @@ module register_tb;
 
   reg clk;
   reg R_in, R_out, rst;
-  wire [2:0] bus;
+  wire [15:0] bus;
 
-  reg [2:0] bus_driver;
+  reg [15:0] bus_driver;
   reg bus_drive_en;
-  assign bus = (bus_drive_en) ? bus_driver : 3'bz;
+  assign bus = (bus_drive_en) ? bus_driver : 16'bz;
 
   // Instantiate the register module
   register uut (
@@ -25,14 +25,14 @@ module register_tb;
   initial begin
     // Initialize
     clk = 0; R_in = 0; R_out = 0; rst = 0;
-    bus_driver = 3'b000; bus_drive_en = 0;
+    bus_driver = 16'b0; bus_drive_en = 0;
 
     // Apply reset
     #10 rst = 1;
     #10 rst = 0;
 
     // Load value onto bus and write into register
-    #10 bus_driver = 3'b101; bus_drive_en = 1; R_in = 1;
+    #10 bus_driver = 16'b0000_0000_0101; bus_drive_en = 1; R_in = 1;
     #10 R_in = 0; bus_drive_en = 0;
 
     // Read from register to bus

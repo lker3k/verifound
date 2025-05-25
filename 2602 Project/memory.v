@@ -7,7 +7,7 @@ module memory #(
     input rst,
     input branch,
 	 input done,
-    input [3:0] branchaddress,
+    input [5:0] branchaddress,
     output [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] instruction
 );
 
@@ -18,7 +18,7 @@ module memory #(
     localparam OP_BR   = 4'b1000;
 
     reg [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] rom [0:15];
-    reg [3:0] pc;
+    reg [5:0] pc;
 
     localparam NA = 3'b000;
     localparam R1 = 3'b001;
@@ -44,7 +44,7 @@ module memory #(
     // Program counter update
     always @(posedge clk or posedge rst) begin
         if (rst)
-            pc <= 4'b0;
+            pc <= 5'b0;
         else if (branch)
             pc <= branchaddress;
         else if (done)

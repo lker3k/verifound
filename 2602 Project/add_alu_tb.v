@@ -3,9 +3,9 @@
 module add_alu_tb;
 
   // Declare testbench variables
-  reg [2:0] a, b;
+  reg [15:0] a, b;
   reg rst;
-  wire [2:0] g;
+  wire [15:0] g;
 
   // Instantiate the Unit Under Test (UUT)
   add_alu uut (

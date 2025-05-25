@@ -3,13 +3,12 @@ module register (
     input R_in,
     input R_out,
 	 input rst,
-    inout [2:0] bus
+    inout [15:0] bus
 );
 
-  reg [2:0] R;
-  reg [2:0] bus_out;
+  reg [15:0] R;
 
-  assign bus = (R_out) ? R : 3'bz;  // Drive bus when R_in is high
+  assign bus = (R_out) ? R : 16'bz;  // Drive bus when R_in is high
   always @(posedge clk or posedge rst) begin
 	 if (rst) begin
 		R = 0;

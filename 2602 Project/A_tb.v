@@ -2,9 +2,9 @@
 
 module A_tb;
 
-  reg [2:0] bus;
+  reg [15:0] bus;
   reg a_in, clk, rst;
-  wire [2:0] A;
+  wire [15:0] A;
 
   // Instantiate module A
   A uut (
@@ -20,18 +20,18 @@ module A_tb;
 
   initial begin
     // Initialize
-    clk = 0; rst = 0; a_in = 0; bus = 3'b000;
+    clk = 0; rst = 0; a_in = 0; bus = 16'b0;
 
     // Reset the register
     #10 rst = 1;
     #10 rst = 0;
 
     // Load value into register A
-    #10 bus = 3'b101; a_in = 1;
+    #10 bus = 16'b0000_0000_0101; a_in = 1;
     #10 a_in = 0;
 
     // Change bus to check register holds old value
-    #10 bus = 3'b010;
+    #10 bus = 16'b0000_0000_0010;
 
     // Apply reset again
     #10 rst = 1;

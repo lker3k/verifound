@@ -13,22 +13,22 @@ module integration (clk, rst);
 	wire [11:0] enable;
 	wire [10:0]  tri_en;
 	
-	wire [2:0] bus;
-	wire [2:0] A;
-	wire [2:0] B;
-	wire [2:0] G;
-	wire [2:0] H;
+	wire [15:0] bus;
+	wire [15:0] A;
+	wire [15:0] B;
+	wire [15:0] G;
+	wire [15:0] H;
 	
-	wire [2:0] data;
+	wire [15:0] data;
 	
 	wire done;
 	
 	wire [1:0] flags;
 	
 	// if assign last 3 bit, it will always be 3'b000 (instruction format) -> assign a value instead
-	assign data = 3'b101;
+	assign data = 16'b0000_0000_0101;
 	
-	assign bus = (tri_en[8]) ? data : 3'bzzz; // load data onto the bus when there's command
+	assign bus = (tri_en[8]) ? data : 16'bz; // load data onto the bus when there's command
 	
 	cpu_fsm fsm (.clk(clk), 
 					.rst(rst), 

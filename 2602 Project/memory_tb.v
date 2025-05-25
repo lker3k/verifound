@@ -6,7 +6,7 @@ module memory_tb;
   reg clk;
   reg rst;
   reg branch;
-  reg [3:0] branchaddress;
+  reg [5:0] branchaddress;
 
   // Output
   wire [7:0] instruction;
@@ -28,7 +28,7 @@ module memory_tb;
     clk = 0;
     rst = 0;
     branch = 0;
-    branchaddress = 4'b0000;
+    branchaddress = 6'b0;
 
     $display("Time | PC | Instruction");
     $monitor("%4t | %b | %b", $time, uut.pc, instruction);
@@ -41,14 +41,14 @@ module memory_tb;
     #40;
 
     // Trigger branch to address 2
-    #1 branchaddress = 4'b0010; branch = 1;
+    #1 branchaddress = 6'b000010; branch = 1;
     #10 branch = 0;
 
     // Let it continue
     #30;
 
     // Branch to address 0 (loop)
-    #1 branchaddress = 4'b0000; branch = 1;
+    #1 branchaddress = 6'b000000; branch = 1;
     #10 branch = 0;
 
     // Let it run again

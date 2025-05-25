@@ -1,6 +1,6 @@
 module compare (a, b, g, rst);
 
-	input [2:0] a, b;
+	input [15:0] a, b;
 	output reg g;
 	
 	input rst;

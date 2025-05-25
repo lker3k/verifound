@@ -1,7 +1,7 @@
 module add_alu (a, b, g, rst);
 
-	input [2:0] a, b;
-	output reg [2:0] g;
+	input [15:0] a, b;
+	output reg [15:0] g;
 	
 	input rst;
 	
