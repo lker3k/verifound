@@ -5,8 +5,8 @@ module memory #(
 )(
     input clk,
     input rst,
+    input branch,
 	 input done,
-    input branch,  
     input [3:0] branchaddress,
     output [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] instruction
 );
@@ -16,7 +16,6 @@ module memory #(
     localparam OP_ADD  = 4'b0010;
     localparam OP_XOR  = 4'b0011;
     localparam OP_BR   = 4'b1000;
-	 localparam OP_BL	  = 4'b1001;
 
     reg [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] rom [0:15];
     reg [3:0] pc;
@@ -32,10 +31,12 @@ module memory #(
 
     initial begin
         rom[0] = {OP_LOAD, R1, NA};  // Example: LOAD R1, NA
-        rom[1] = {OP_MOVE, R2, R1};  // Example: MOV R2, R1
+        rom[1] = {OP_MOVE, R2, R3};  // Example: MOV R1, R2
         rom[2] = {OP_ADD, R1, R2};   // Example: ADD R1, R2
-        //rom[3] = {OP_ADD, R1, R2};   // Example: XOR R1, R2
-		  rom[3] = {OP_XOR, R1, R2};
+        rom[3] = {OP_ADD, R3, R2};   // Example: XOR R1, R2
+		  rom[4] = {OP_XOR, R2, R1};
+		  rom[5] = {OP_XOR, R3, R2};
+		  rom[6] = {OP_ADD, R2, R3};
     end
 
     assign instruction = rom[pc];
@@ -46,8 +47,8 @@ module memory #(
             pc <= 4'b0;
         else if (branch)
             pc <= branchaddress;
-        else if (done) begin
+        else if (done)
             pc <= pc + 1;
-		  end
+		else pc <= pc;
     end
 endmodule

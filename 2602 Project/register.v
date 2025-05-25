@@ -10,14 +10,12 @@ module register (
   reg [2:0] bus_out;
 
   assign bus = (R_out) ? R : 3'bz;  // Drive bus when R_in is high
-  always @(*) begin
+  always @(posedge clk or posedge rst) begin
 	 if (rst) begin
 		R = 0;
 	 end else if (R_in) begin
       R = bus;  // Capture bus value on rising edge if R_out is high
-    end else begin
-		R = R;
-	 end
+    end
   end
 
 endmodule

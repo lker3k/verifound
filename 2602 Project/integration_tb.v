@@ -30,7 +30,7 @@ module integration_tb;
     #10 rst = 1;
 
     // Run simulation
-    #200;
+    #300;
 
     $finish;
   end

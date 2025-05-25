@@ -10,7 +10,7 @@ module integration (clk, rst);
 	
 	wire [OP_SIZE + ARG_NUM * ARG_SIZE - 1:0] instruction;
 	
-	wire [7:0] enable;
+	wire [11:0] enable;
 	wire [10:0]  tri_en;
 	
 	wire [2:0] bus;
@@ -18,15 +18,12 @@ module integration (clk, rst);
 	wire [2:0] B;
 	wire [2:0] G;
 	wire [2:0] H;
-	wire [5:0] general_reg;
 	
 	wire [2:0] data;
 	
 	wire done;
 	
-	wire [1:0] clr_flags;
-	
-	
+	wire [1:0] flags;
 	
 	// if assign last 3 bit, it will always be 3'b000 (instruction format) -> assign a value instead
 	assign data = 3'b101;
@@ -37,11 +34,10 @@ module integration (clk, rst);
 					.rst(rst), 
 					.instruction(instruction), 
 					.en_reg(enable), 
-					.tri_reg(tri_en), 
-					.general_reg(general_reg), 
+					.tri_reg(tri_en),
 					.done(done), 
-					.addclr(clr_flags[0]), 
-					.xorclr(clr_flags[1]));
+					.addclr(flags[0]), 
+					.xorclr(flags[1]));
 					
 	memory memory (.clk(clk),
 					 .rst(!rst),
@@ -49,6 +45,7 @@ module integration (clk, rst);
 					 .done(done),
 					 .branchaddress(0),
 					 .instruction(instruction));
+
 					 
 	genvar i;
 	generate 
@@ -65,10 +62,10 @@ module integration (clk, rst);
 	add_alu adder (.a(A), .b(bus), .g(G), .rst(!rst));
 	xor_alu xor_  (.a(B), .b(bus), .g(H), .rst(!rst));
 	
-	A a (.A(A), .bus(bus), .a_in(general_reg[5]), .clk(clk), .rst(!rst));
-	A b (.A(B), .bus(bus), .a_in(general_reg[2]), .clk(clk), .rst(!rst));
+	A a (.A(A), .bus(bus), .a_in(enable[11]), .clk(clk), .rst(!rst | flags[0]));
+	A b (.A(B), .bus(bus), .a_in(enable[9]), .clk(clk), .rst(!rst | flags[1]));
 	
-	alu_out g (.G(bus), .clk(clk), .rst(!rst), .G_in(general_reg[3]), .G_out(tri_en[10]), .alu_in(G));
+	alu_out g (.G(bus), .clk(clk), .rst(!rst), .G_in(enable[10]), .G_out(tri_en[10]), .alu_in(G));
 				  
-	alu_out h (.G(bus), .clk(clk), .rst(!rst), .G_in(general_reg[0]), .G_out(tri_en[9]), .alu_in(H));
+	alu_out h (.G(bus), .clk(clk), .rst(!rst), .G_in(enable[8]), .G_out(tri_en[9]), .alu_in(H));
 endmodule

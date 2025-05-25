@@ -11,13 +11,11 @@ module alu_out (G, clk, rst, G_in, G_out, alu_in);
 	
 	assign G = (G_out)? g : 3'bzzz;
 	
-	always @(*) begin
+	always @(posedge clk or posedge rst) begin
 		if (rst) begin
-			g = 0;
+			g <= 0;
 		end else if (G_in) begin
-			g = alu_in;
-		end else begin
-			g = g;
+			g <= alu_in;
 		end
 	end
 	
