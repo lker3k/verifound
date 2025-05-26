@@ -37,11 +37,12 @@ module memory #(
     initial begin
 		  rom[0] = {OP_LOAD, R1, NA};
 		  rom[1] = {OP_LOAD, R2, NA};
-		  rom[2] = {OP_LDPC, 6'b000100};
-		  rom[3] = {OP_BRN, 6'b000001};
-		  rom[4] = {OP_LOAD, R1, NA};
-		  rom[5] = {OP_MOVE, R3, R1};
-		  rom[6] = {OP_BXLR, PC, PC};
+		  rom[2] = {OP_ADD, R1, R2};
+		  rom[3] = {OP_LDPC, 6'b000101};
+		  rom[4] = {OP_BRN, 6'b000001};
+		  rom[5] = {OP_LOAD, R1, NA};
+		  rom[6] = {OP_MOVE, R3, R1};
+		  rom[7] = {OP_BXLR, PC, PC};
 	 
 	 /*
         rom[0] = {OP_LOAD, R1, NA};  // Example: LOAD R1, NA

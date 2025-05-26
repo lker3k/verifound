@@ -200,6 +200,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, done, addclr, xorclr, bra
 				end
             ADD1: begin
                 tri_src = TRI_RX;
+					 
                 a_en 	= 1'b1;
             end
             ADD2: begin
@@ -334,6 +335,7 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, done, addclr, xorclr, bra
                 default : en_regX = 8'b00000000;
             endcase
         end
+		  end
         if (RY_en) begin
             case(arg2)
                 R0 : en_regY = 8'b00000001;
@@ -348,6 +350,5 @@ module cpu_fsm(clk, rst, instruction, en_reg, tri_reg, done, addclr, xorclr, bra
             endcase
         end
         en_reg = {a_en, g_en, b_en, h_en, (en_regX | en_regY)};
-		end
 		end
 endmodule
