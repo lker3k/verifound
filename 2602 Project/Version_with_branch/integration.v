@@ -1,8 +1,8 @@
-module integration (clk, rst);
+module integration (clk, rst, bus_out);
 
 	input clk, rst;
 	
-	
+	output [15:0] bus_out;
 	parameter OP_SIZE = 4;
 	parameter ARG_SIZE = 3;
 	parameter ARG_NUM = 2;
@@ -35,6 +35,8 @@ module integration (clk, rst);
 	assign data = 16'b0000_0000_0101;
 	
 	assign bus = (tri_en[8]) ? data : 16'bz; // load data onto the bus when there's command
+	
+	assign bus_out = bus;
 	
 	
 	reg [5:0] branchaddress;
