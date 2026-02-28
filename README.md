@@ -6,4 +6,4 @@ Group repository for Elec2602, we were verilost last sem, but now we are verifou
 only upload the .v files here not whole quartus projects
 
 ## Final project report 
-Report can be found in the GitHub workspace
+Report can be found in the GitHub workspace as a pdf file
